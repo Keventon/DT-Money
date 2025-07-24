@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { schema } from "./schema";
 
-interface FormRegisterParams {
+export interface FormRegisterParams {
   name: string;
   email: string;
   password: string;
