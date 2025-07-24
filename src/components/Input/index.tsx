@@ -5,6 +5,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { colors } from "@/shared/colors";
 import { useRef, useState } from "react";
 import clsx from "clsx";
+import { ErrorMessage } from "../ErrorMessage";
 
 interface InputParams<T extends FieldValues> extends TextInputProps {
   control: Control<T>;
@@ -37,8 +38,6 @@ export const Input = <T extends FieldValues>({
       control={control}
       name={name}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        console.log(error);
-
         return (
           <View className="w-full mt-4">
             {label && (
@@ -85,6 +84,8 @@ export const Input = <T extends FieldValues>({
                 </TouchableOpacity>
               )}
             </TouchableOpacity>
+
+            {error && <ErrorMessage error={error.message} />}
           </View>
         );
       }}
