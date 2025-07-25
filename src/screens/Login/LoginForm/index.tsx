@@ -6,6 +6,11 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { schema } from "./schema";
+import { useAuthContext } from "@/context/AuthContext";
+import { AxiosError } from "axios";
+import { useSnackbarContext } from "@/context/SnackbarContext";
+import { AppError } from "@/shared/helpers/AppError";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export interface FormLoginParams {
   email: string;
@@ -16,7 +21,7 @@ export function LoginForm() {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted },
+    formState: { isSubmitting },
   } = useForm<FormLoginParams>({
     defaultValues: {
       email: "",
@@ -25,9 +30,18 @@ export function LoginForm() {
     resolver: yupResolver(schema),
   });
 
+  const { handleAuthenticate } = useAuthContext();
+  const { handleError } = useErrorHandler();
+
   const navigation = useNavigation<NavigationProp<PublicStackParamsList>>();
 
-  async function onSubmit() {}
+  async function onSubmit(userData: FormLoginParams) {
+    try {
+      await handleAuthenticate(userData);
+    } catch (error) {
+      handleError(error, "Falha ao logar");
+    }
+  }
 
   return (
     <>
@@ -52,6 +66,7 @@ export function LoginForm() {
           title="Login"
           iconName="arrow-forward"
           onPress={handleSubmit(onSubmit)}
+          isLoading={isSubmitting}
         />
 
         <View>

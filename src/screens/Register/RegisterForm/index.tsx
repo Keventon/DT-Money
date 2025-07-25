@@ -6,6 +6,9 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { schema } from "./schema";
+import { useAuthContext } from "@/context/AuthContext";
+import { AxiosError } from "axios";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export interface FormRegisterParams {
   name: string;
@@ -18,7 +21,7 @@ export function RegisterForm() {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitted },
+    formState: { isSubmitting },
   } = useForm<FormRegisterParams>({
     defaultValues: {
       name: "",
@@ -29,9 +32,17 @@ export function RegisterForm() {
     resolver: yupResolver(schema),
   });
 
+  const { handleRegister } = useAuthContext();
+  const { handleError } = useErrorHandler();
   const navigation = useNavigation<NavigationProp<PublicStackParamsList>>();
 
-  async function onSubmit() {}
+  async function onSubmit(userData: FormRegisterParams) {
+    try {
+      await handleRegister(userData);
+    } catch (error) {
+      handleError(error, "Falha ao cadastrar usuário");
+    }
+  }
 
   return (
     <>
@@ -74,6 +85,7 @@ export function RegisterForm() {
           title="Cadastrar"
           iconName="arrow-forward"
           onPress={handleSubmit(onSubmit)}
+          isLoading={isSubmitting}
         />
 
         <View>

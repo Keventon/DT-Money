@@ -1,4 +1,9 @@
-import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import clsx from "clsx";
 import { colors } from "@/shared/colors";
@@ -6,11 +11,18 @@ import { colors } from "@/shared/colors";
 type ButtonMode = "fill" | "outline";
 interface Props extends TouchableOpacityProps {
   title: string;
+  isLoading?: boolean;
   mode?: ButtonMode;
   iconName?: keyof typeof MaterialIcons.glyphMap;
 }
 
-export function Button({ title, mode = "fill", iconName, ...rest }: Props) {
+export function Button({
+  title,
+  mode = "fill",
+  iconName,
+  isLoading = false,
+  ...rest
+}: Props) {
   const isFill = mode === "fill";
 
   return (
@@ -23,16 +35,21 @@ export function Button({ title, mode = "fill", iconName, ...rest }: Props) {
           "bg-none border-[1px] border-accent-brand": !isFill,
         }
       )}
+      disabled={isLoading}
       {...rest}
     >
-      <Text
-        className={clsx("text-base", {
-          "text-white": isFill,
-          "text-accent-brand": !isFill,
-        })}
-      >
-        {title}
-      </Text>
+      {isLoading ? (
+        <ActivityIndicator color={colors.white} />
+      ) : (
+        <Text
+          className={clsx("text-base", {
+            "text-white": isFill,
+            "text-accent-brand": !isFill,
+          })}
+        >
+          {title}
+        </Text>
+      )}
 
       {iconName && (
         <MaterialIcons
