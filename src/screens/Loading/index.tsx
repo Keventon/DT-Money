@@ -17,10 +17,10 @@ export function Loading({ setLoading }: Props) {
         const user = await restoreUserSession();
 
         if (!user) {
-          await handleLogout();
+          handleLogout();
         }
       } catch (error) {
-        await handleLogout();
+        handleLogout();
       } finally {
         setLoading(false);
       }
