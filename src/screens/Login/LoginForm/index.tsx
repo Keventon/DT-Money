@@ -51,12 +51,13 @@ export function LoginForm() {
         label="E-mail"
         placeholder="mail@example.com"
         leftIconName="mail-outline"
+        autoCapitalize="none"
+        inputMode="email"
       />
       <Input
         control={control}
         name="password"
         label="Senha"
-        placeholder="Sua senha"
         leftIconName="lock-outline"
         iconPassword
       />
