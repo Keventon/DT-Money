@@ -1,6 +1,6 @@
 import { FormLoginParams } from "@/screens/Login/LoginForm";
 import { api } from "../api";
-import { IAuthenticateResponse } from "@/shared/interfaces/https/authenticate-response";
+import { IAuthenticateResponse } from "@/shared/interfaces/https/authenticateResponse";
 import { FormRegisterParams } from "@/screens/Register/RegisterForm";
 
 export async function authenticate(

@@ -8,10 +8,10 @@ import {
   useState,
 } from "react";
 
-import * as authService from "@/shared/service/dt-money/auth.service";
-import { IUser } from "@/shared/interfaces/user-interface";
+import * as authService from "@/shared/service/dt-money/authService";
+import { IUser } from "@/shared/interfaces/userInterface";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IAuthenticateResponse } from "@/shared/interfaces/https/authenticate-response";
+import { IAuthenticateResponse } from "@/shared/interfaces/https/authenticateResponse";
 
 type AuthContextType = {
   user: IUser | null;

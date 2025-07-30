@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Platform } from "react-native";
 import { AppError } from "../helpers/AppError";
+import { addTokenToRequest } from "../helpers/axiosHelper";
 
 const baseURL = Platform.select({
   ios: "http://localhost:3001",
@@ -10,6 +11,8 @@ const baseURL = Platform.select({
 export const api = axios.create({
   baseURL,
 });
+
+addTokenToRequest(api);
 
 api.interceptors.response.use(
   (config) => config,

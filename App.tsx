@@ -2,6 +2,7 @@ import { Snackbar } from "@/components/Snackbar";
 import { AuthContextProvider } from "@/context/AuthContext";
 import { BottomSheetProvider } from "@/context/BottomSheetContext";
 import { SnackbarContextProvider } from "@/context/SnackbarContext";
+import { TransactionContextProvider } from "@/context/TransactionContext";
 import NavigationRoutes from "@/routes";
 import { Login } from "@/screens/Login";
 import "@/styles/global.css";
@@ -12,10 +13,12 @@ export default function App() {
     <GestureHandlerRootView className="flex-1">
       <SnackbarContextProvider>
         <AuthContextProvider>
-          <BottomSheetProvider>
-            <NavigationRoutes />
-            <Snackbar />
-          </BottomSheetProvider>
+          <TransactionContextProvider>
+            <BottomSheetProvider>
+              <NavigationRoutes />
+              <Snackbar />
+            </BottomSheetProvider>
+          </TransactionContextProvider>
         </AuthContextProvider>
       </SnackbarContextProvider>
     </GestureHandlerRootView>

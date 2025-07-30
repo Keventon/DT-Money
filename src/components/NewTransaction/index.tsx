@@ -1,4 +1,4 @@
-import { CreateTransactionInterface } from "@/shared/interfaces/https/create-transaction";
+import { CreateTransactionInterface } from "@/shared/interfaces/https/createTransaction";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -6,6 +6,13 @@ import { colors } from "@/shared/colors";
 import { useBottomSheetContext } from "@/context/BottomSheetContext";
 import CurrencyInput from "react-native-currency-input";
 import { TransactionTypeSelector } from "../SelectType";
+import { SelectCategoryModal } from "../SelectCategoryModal";
+import { transactionSchema } from "./schema";
+import * as yup from "yup";
+import { Button } from "../Button";
+import { ErrorMessage } from "../ErrorMessage";
+
+type ValidationErrosTypes = Record<keyof CreateTransactionInterface, string>;
 
 export function NewTransaction() {
   const [transaction, setTransaction] = useState<CreateTransactionInterface>({
@@ -14,6 +21,29 @@ export function NewTransaction() {
     typeId: 0,
     value: 0,
   });
+  const [validationErros, setValidationErros] =
+    useState<ValidationErrosTypes>();
+
+  async function handleCreateTransaction() {
+    try {
+      await transactionSchema.validate(transaction, {
+        abortEarly: false,
+      });
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        const errors = {} as ValidationErrosTypes;
+
+        error.inner.forEach((error) => {
+          if (error.path) {
+            errors[error.path as keyof CreateTransactionInterface] =
+              error.message;
+          }
+        });
+
+        setValidationErros(errors);
+      }
+    }
+  }
 
   function setTransactionType(
     key: keyof CreateTransactionInterface,
@@ -42,6 +72,11 @@ export function NewTransaction() {
           placeholderTextColor={colors.gray[700]}
           value={transaction.description}
         />
+
+        {validationErros?.description && (
+          <ErrorMessage error={validationErros.description} />
+        )}
+
         <CurrencyInput
           className="text-white text-lg h-[50px] bg-background-primary my-2 rounded-[6] pl-4"
           value={transaction.value}
@@ -52,11 +87,33 @@ export function NewTransaction() {
           minValue={0}
           onChangeValue={(value) => setTransactionType("value", value ?? 0)}
         />
+        {validationErros?.value && (
+          <ErrorMessage error={validationErros.value} />
+        )}
+
+        <SelectCategoryModal
+          selectedCategory={transaction.categoryId}
+          onSelect={(categoryId) =>
+            setTransactionType("categoryId", categoryId)
+          }
+        />
+
+        {validationErros?.typeId && (
+          <ErrorMessage error={validationErros.typeId} />
+        )}
 
         <TransactionTypeSelector
           typeId={transaction.typeId}
           setTransactionType={(typeId) => setTransactionType("typeId", typeId)}
         />
+
+        {validationErros?.categoryId && (
+          <ErrorMessage error={validationErros.categoryId} />
+        )}
+
+        <View className="my-4">
+          <Button title="Registrar" onPress={handleCreateTransaction} />
+        </View>
       </View>
     </View>
   );
