@@ -11,10 +11,14 @@ import { transactionSchema } from "./schema";
 import * as yup from "yup";
 import { Button } from "../Button";
 import { ErrorMessage } from "../ErrorMessage";
+import { useTransactionContext } from "@/context/TransactionContext";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useSnackbarContext } from "@/context/SnackbarContext";
 
 type ValidationErrosTypes = Record<keyof CreateTransactionInterface, string>;
 
 export function NewTransaction() {
+  const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState<CreateTransactionInterface>({
     categoryId: 0,
     description: "",
@@ -24,11 +28,23 @@ export function NewTransaction() {
   const [validationErros, setValidationErros] =
     useState<ValidationErrosTypes>();
 
+  const { closeBottomSheet } = useBottomSheetContext();
+  const { createTransaction } = useTransactionContext();
+  const { handleError } = useErrorHandler();
+  const { notify } = useSnackbarContext();
+
   async function handleCreateTransaction() {
     try {
+      setLoading(true);
       await transactionSchema.validate(transaction, {
         abortEarly: false,
       });
+      await createTransaction(transaction);
+      notify({
+        message: "Transação criada com sucesso",
+        messageType: "SUCESS",
+      });
+      closeBottomSheet();
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         const errors = {} as ValidationErrosTypes;
@@ -41,7 +57,11 @@ export function NewTransaction() {
         });
 
         setValidationErros(errors);
+      } else {
+        handleError(error, "Falha ao criar transação");
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,8 +71,6 @@ export function NewTransaction() {
   ) {
     setTransaction((prevData) => ({ ...prevData, [key]: value }));
   }
-
-  const { closeBottomSheet } = useBottomSheetContext();
 
   return (
     <View className="px-8 py-5">
@@ -98,8 +116,8 @@ export function NewTransaction() {
           }
         />
 
-        {validationErros?.typeId && (
-          <ErrorMessage error={validationErros.typeId} />
+        {validationErros?.categoryId && (
+          <ErrorMessage error={validationErros.categoryId} />
         )}
 
         <TransactionTypeSelector
@@ -107,12 +125,16 @@ export function NewTransaction() {
           setTransactionType={(typeId) => setTransactionType("typeId", typeId)}
         />
 
-        {validationErros?.categoryId && (
-          <ErrorMessage error={validationErros.categoryId} />
+        {validationErros?.typeId && (
+          <ErrorMessage error={validationErros.typeId} />
         )}
 
         <View className="my-4">
-          <Button title="Registrar" onPress={handleCreateTransaction} />
+          <Button
+            title="Registrar"
+            onPress={handleCreateTransaction}
+            isLoading={loading}
+          />
         </View>
       </View>
     </View>
