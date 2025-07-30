@@ -1,14 +1,14 @@
-import { AppHeader } from "@/components/AppHeader";
 import { useAuthContext } from "@/context/AuthContext";
 import { useTransactionContext } from "@/context/TransactionContext";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ListHeader } from "./ListHeader";
 
 export function Home() {
   const { handleLogout } = useAuthContext();
-  const { fetchCategories } = useTransactionContext();
+  const { fetchCategories, fetchTransactions } = useTransactionContext();
   const { handleError } = useErrorHandler();
 
   async function handleFetchCategories() {
@@ -21,16 +21,16 @@ export function Home() {
 
   useEffect(() => {
     handleFetchCategories();
+    fetchTransactions();
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-background-primary">
-      <AppHeader />
-      <Text>Tela Home</Text>
-
-      <TouchableOpacity onPress={handleLogout}>
-        <Text>Sair</Text>
-      </TouchableOpacity>
+    <SafeAreaView className="flex-1 bg-background-secondary">
+      <FlatList
+        data={[]}
+        ListHeaderComponent={ListHeader}
+        renderItem={() => <></>}
+      />
     </SafeAreaView>
   );
 }

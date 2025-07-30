@@ -1,6 +1,11 @@
 import { TransactionCategory } from "@/shared/interfaces/https/TransactionCategoryResponse";
 import { api } from "../api";
 import { CreateTransactionInterface } from "@/shared/interfaces/https/createTransaction";
+import {
+  TransactionRequest,
+  TransactionResponse,
+} from "@/shared/interfaces/https/getTransactionRequest";
+import qs from "qs";
 
 export async function getTransactionsCategories(): Promise<
   TransactionCategory[]
@@ -16,4 +21,15 @@ export async function createTransaction(
   transaction: CreateTransactionInterface
 ) {
   await api.post("/transaction", transaction);
+}
+
+export async function getTransactions(
+  params: TransactionRequest
+): Promise<TransactionResponse> {
+  const { data } = await api.get<TransactionResponse>("/transaction", {
+    params,
+    paramsSerializer: (p) => qs.stringify(p, { arrayFormat: "repeat" }),
+  });
+
+  return data;
 }
