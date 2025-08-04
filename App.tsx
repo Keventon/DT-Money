@@ -4,7 +4,6 @@ import { BottomSheetProvider } from "@/context/BottomSheetContext";
 import { SnackbarContextProvider } from "@/context/SnackbarContext";
 import { TransactionContextProvider } from "@/context/TransactionContext";
 import NavigationRoutes from "@/routes";
-import { Login } from "@/screens/Login";
 import "@/styles/global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
