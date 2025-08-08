@@ -23,6 +23,10 @@ export async function createTransaction(
   await api.post("/transaction", transaction);
 }
 
+export async function deleteTransaction(id: number) {
+  await api.delete(`/transaction/${id}`);
+}
+
 export async function getTransactions(
   params: TransactionRequest
 ): Promise<TransactionResponse> {
