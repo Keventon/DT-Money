@@ -8,6 +8,7 @@ import { TransactionType } from "@/shared/enums/transactionTypes";
 import clsx from "clsx";
 import { RightAction } from "./RightAction";
 import { LeftAction } from "./LeftAction";
+import { moneyMapper } from "@/utils/moneyMapper";
 
 type Props = {
   transaction: Transaction;
@@ -38,7 +39,7 @@ export function TransactionCard({ transaction }: Props) {
             isExpense ? "text-accent-red" : "text-accent-brand-light"
           )}
         >
-          {isExpense && "-"} R$ {transaction.value.toFixed(2).replace(".", ",")}
+          {isExpense && "-"} R$ {moneyMapper(transaction.value)}
         </Text>
 
         <View className="flex-row w-full justify-between items-center">
