@@ -6,6 +6,7 @@ import {
   TransactionResponse,
 } from "@/shared/interfaces/https/getTransactionRequest";
 import qs from "qs";
+import { UpdateTransactionRequest } from "@/shared/interfaces/https/updateTransactionRequest";
 
 export async function getTransactionsCategories(): Promise<
   TransactionCategory[]
@@ -36,4 +37,8 @@ export async function getTransactions(
   });
 
   return data;
+}
+
+export async function updateTransaction(transaction: UpdateTransactionRequest) {
+  await api.put("/transaction", transaction);
 }
