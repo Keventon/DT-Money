@@ -22,6 +22,8 @@ export type TransactionContextType = {
   updateTransaction: (transaction: UpdateTransactionRequest) => Promise<void>;
   totalTransactions: TotalTransactions;
   transactions: Transaction[];
+  refreshTransactions: () => Promise<void>;
+  loading: boolean;
 };
 
 export const TransactionContext = createContext({} as TransactionContextType);
@@ -30,6 +32,7 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const [categories, setCategories] = useState<TransactionCategory[]>([]);
+  const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   async function fetchCategories() {
     const categoriesResponse =
@@ -46,10 +49,24 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({
 
   async function createTransaction(transaction: CreateTransactionInterface) {
     await transactionServices.createTransaction(transaction);
+    await refreshTransactions();
   }
 
   async function updateTransaction(transaction: UpdateTransactionRequest) {
     await transactionServices.updateTransaction(transaction);
+    await refreshTransactions();
+  }
+
+  async function refreshTransactions() {
+    setLoading(true);
+    const transactionResponse = await transactionServices.getTransactions({
+      page: 1,
+      perPage: 10,
+    });
+
+    setTransactions(transactionResponse.data);
+    setTotalTransactions(transactionResponse.totalTransactions);
+    setLoading(false);
   }
 
   const fetchTransactions = useCallback(async () => {
@@ -72,6 +89,8 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({
         totalTransactions,
         transactions,
         updateTransaction,
+        refreshTransactions,
+        loading,
       }}
     >
       {children}
