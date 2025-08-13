@@ -1,6 +1,13 @@
 import { Transaction } from "../transaction";
 import { TotalTransactions } from "./totalTransactions";
 
+export type Pagination = {
+  page: number;
+  perPage: number;
+  totalRows?: number;
+  totalPages: number;
+};
+
 export type TransactionRequest = {
   page: number;
   perPage: number;
